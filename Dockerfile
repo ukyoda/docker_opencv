@@ -1,4 +1,4 @@
-FROM centos:6.8
+FROM centos:7.3.1611
 
 MAINTAINER ukyoda
 
@@ -12,7 +12,7 @@ RUN yum update -y \
                           openssl \
                           openssl-devel \
                           wget \
-                          boost boost-dev \
+                          boost* \
         && yum clean all
 
 # GlogとGflagsをインストール
@@ -37,30 +37,17 @@ RUN cd \
     && cd \
     && rm -f v0.3.4.tar.gz
 
-# Python 2.7インストール
+
+# Python 2.7準備
 ################################################################################
 RUN cd \
-    && wget https://www.python.org/ftp/python/2.7.8/Python-2.7.8.tgz \
-    && tar xvzf Python-2.7.8.tgz \
-    && cd Python-2.7.8 \
-    && ./configure --prefix=/usr/local \
-    && make \
-    && make altinstall \
-    && cd \
-    && rm -f Python-2.7.8.tgz
-RUN cd \
-    && wget --no-check-certificate https://pypi.python.org/packages/source/s/setuptools/setuptools-1.4.2.tar.gz \
-    && tar -xvf setuptools-1.4.2.tar.gz \
-    && cd setuptools-1.4.2 \
-    && python2.7 setup.py install \
-    && curl https://bootstrap.pypa.io/get-pip.py | python2.7 - \
-    && cd \
-    && rm -f setuptools-1.4.2.tar.gz
+    && yum install -y epel-release \
+    && yum install -y python-pip \
+    && yum clean all
+RUN pip install --upgrade pip \
+    && pip install numpy
 
-RUN pip install numpy
-
-#
-# # OpenCVインストール
+# OpenCVインストール
 ################################################################################
 RUN cd \
     && wget https://github.com/opencv/opencv/archive/3.2.0.tar.gz -O opencv.tar.gz \
@@ -77,19 +64,22 @@ RUN cd \
              -D WITH_CUDA=OFF \
              -D BUILD_TIFF=ON \
              -D BUILD_opencv_python2=ON \
-             -D PYTHON_EXECUTABLE=$(which python2.7) \
+             -D PYTHON_EXECUTABLE=$(which python) \
              .. \
     && make -j$(nproc) \
     && make install \
     && cd \
-    && rm opencv.tar.gz \
-    && rm opencv-contrib.tar.gz
+    && rm -f opencv.tar.gz \
+    && rm -f opencv-contrib.tar.gz
 
 # PKG_CONFIG_PATH設定
 ENV PKG_CONFIG_PATH ${PKG_CONFIG_PATH}:/usr/local/lib/pkgconfig/
+# Boostのパス設定
+ENV BOOST_ROOT /usr/lib64/
+ENV Boost_INCLUDE_DIR /usr/include/boost/
 
 # WORK_DIRECTORY設定
 WORKDIR /app
 
 # CMD設定(BASH)
-CMD /bin/bash
+CMD ["/bin/bash"]
