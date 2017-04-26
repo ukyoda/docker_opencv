@@ -41,6 +41,7 @@ RUN cd \
 # Python 2.7準備
 ################################################################################
 RUN cd \
+    && yum install -y python-devel \
     && yum install -y epel-release \
     && yum install -y python-pip \
     && yum clean all
