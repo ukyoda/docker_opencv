@@ -12,6 +12,7 @@ RUN yum update -y \
                           openssl \
                           openssl-devel \
                           wget \
+                          which \
                           boost* \
         && yum clean all
 
