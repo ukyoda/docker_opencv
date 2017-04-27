@@ -78,6 +78,8 @@ ENV PKG_CONFIG_PATH ${PKG_CONFIG_PATH}:/usr/local/lib/pkgconfig/
 # Boostのパス設定
 ENV BOOST_ROOT /usr/lib64/
 ENV Boost_INCLUDE_DIR /usr/include/boost/
+# LD_LIBRARY_PATH設定
+ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:/usr/local/lib
 
 # WORK_DIRECTORY設定
 WORKDIR /app
