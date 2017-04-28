@@ -70,6 +70,8 @@ RUN cd \
              .. \
     && make -j$(nproc) \
     && make install \
+    && cd lib \
+    && cp cv2.so /usr/lib/python2.7/site-packages/ \
     && cd \
     && rm -f opencv.tar.gz \
     && rm -f opencv-contrib.tar.gz
